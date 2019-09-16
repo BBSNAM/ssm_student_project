@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="priv.wang.dao.IGradeDao">
+
+    <!--实现查询全部-->
+    <select id="findAll" resultType="Grade">
+        SELECT *
+        FROM `grade` WHERE 1 = 1
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+            AND `name` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="series != null and series > 0">
+            AND `series` = #{series}
+        </if>
+        ORDER BY CONVERT(name USING gbk)
+        LIMIT #{start}, #{end}
+    </select>
+
+    <!--实现查询总记录数-->
+    <select id="findCount" resultType="int">
+        SELECT COUNT(1)
+        FROM `grade` WHERE 1 = 1
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+            AND `name` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="series != null and series > 0">
+            AND `series` = #{series}
+        </if>
+    </select>
+
+    <!--实现插入-->
+    <insert id="insertInfo" parameterType="Grade">
+        INSERT INTO `grade`(`series`,`name`,`remark`,`year`)
+        VALUES (#{series}, #{name}, #{remark}, NOW())
+    </insert>
+
+    <!--实现更新-->
+    <update id="updateInfo" parameterType="Grade">
+        UPDATE `grade`
+        SET `name` = #{name}, `remark` = #{remark}, `series` = #{series}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--实现删除-->
+    <delete id="deleteInfo" parameterType="String">
+        DELETE
+        FROM `grade`
+        WHERE `id` IN (${delValues})
+    </delete>
+
+    <!--实现根据clazzId查询该年级的开设时间-->
+    <select id="findYearByClazzId" resultType="String" parameterType="INT">
+        SELECT YEAR(`year`)
+        FROM `grade` g, `clazz` c
+        WHERE g.id = c.gradeId AND c.id = #{clazzId}
+    </select>
+
+    <!--实现根据clazzId查询该年级的专业编号-->
+    <select id="findSeriesByClazzId" resultType="int" parameterType="INT">
+        SELECT `series`
+        FROM `grade` g, `clazz` c
+        WHERE g.id = c.gradeId AND c.id = #{clazzId}
+    </select>
+
+</mapper>

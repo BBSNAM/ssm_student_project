@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="priv.wang.dao.ISubjectTypeDao">
+
+    <!--别名-->
+    <resultMap id="SubjectTypeMap" type="SubjectType">
+        <id property="id" column="id"/>
+        <result property="subId" column="subject_id"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!--实现查询全部-->
+    <select id="findAll" resultMap="SubjectTypeMap">
+        SELECT *
+        FROM `subject_type` WHERE 1 = 1
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+            AND `name` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="subId != null and subId > 0">
+            AND `subject_id` = #{subId}
+        </if>
+        ORDER BY CONVERT(name USING gbk)
+        LIMIT #{start}, #{end}
+    </select>
+
+    <!--实现查询总记录数-->
+    <select id="findCount" resultType="int">
+        SELECT COUNT(1)
+        FROM `subject_type` WHERE 1 = 1
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+              AND `name` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="subId != null and subId > 0">
+              AND `subject_id` = #{subId}
+        </if>
+    </select>
+
+    <!--实现插入-->
+    <insert id="insertInfo" parameterType="SubjectType">
+        INSERT INTO `subject_type`(`subject_id`,`name`,`remark`)
+        VALUES (#{subId}, #{name}, #{remark})
+    </insert>
+
+    <!--实现更新-->
+    <update id="updateInfo" parameterType="SubjectType">
+        UPDATE `subject_type`
+        SET `name` = #{name}, `remark` = #{remark}, `subject_id` = #{subId}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--实现删除-->
+    <delete id="deleteInfo" parameterType="String">
+        DELETE
+        FROM `subject_type`
+        WHERE `id` IN (${id})
+    </delete>
+
+</mapper>

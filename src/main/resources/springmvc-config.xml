@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--开启注解支持-->
+    <mvc:annotation-driven/>
+
+    <!--开启扫描包-->
+    <context:component-scan base-package="priv.wang">
+        <!--只扫描Controller-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--忽略静态文件拦截-->
+    <mvc:default-servlet-handler/>
+
+    <!--配置视图解析器-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--全部拦截-->
+            <mvc:mapping path="/**"/>
+            <!--以下除外-->
+            <mvc:exclude-mapping path="/system/login" />
+            <mvc:exclude-mapping path="/system/get_cpacha" />
+            <mvc:exclude-mapping path="/system/loginVerify" />
+            <mvc:exclude-mapping path="/system/loginOut" />
+            <mvc:exclude-mapping path="/h-ui/**"/>
+            <mvc:exclude-mapping path="/easyui/**"/>
+            <bean id="myInterceptor" class="priv.wang.interpector.MyInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--配置文件解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--设置属性-->
+        <property name="maxUploadSize" value="3145728"/>   <!--限制文件最大大小为3M-->
+    </bean>
+
+</beans>

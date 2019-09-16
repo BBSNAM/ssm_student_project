@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="priv.wang.dao.IUserDao">
+
+    <!--实现登录验证-->
+    <select id="findLoginVerify" resultType="User">
+        SELECT *
+        FROM `user`
+        WHERE username = #{uName} AND password = #{pwd}
+    </select>
+
+    <!--实现查询全部-->
+    <select id="findAll" resultType="User">
+        SELECT *
+        FROM `user`
+        <!--判断是否传入名字-->
+        <where>
+            <if test="username != null and username != ''">
+                `username` LIKE #{username}
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT #{start}, #{end}
+    </select>
+
+    <!--实现查询总记录数-->
+    <select id="findCount" resultType="int">
+        SELECT COUNT(1)
+        FROM `user`
+        <!--判断是否传入名字-->
+        <where>
+            <if test="username != null and username != ''">
+                `username` LIKE #{username}
+            </if>
+        </where>
+    </select>
+
+    <!--实现插入-->
+    <insert id="insertInfo" parameterType="User">
+        INSERT INTO `user`(`username`,`password`)
+        VALUES (#{username}, #{password})
+    </insert>
+
+    <!--实现更新-->
+    <update id="updateInfo" parameterType="User">
+        UPDATE `user`
+        SET `username` = #{username}, `password` = #{password}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--实现删除-->
+    <delete id="deleteInfo" parameterType="String">
+        DELETE
+        FROM `user`
+        WHERE `id` IN (${id})
+    </delete>
+
+</mapper>

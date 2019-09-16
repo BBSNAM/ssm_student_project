@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="priv.wang.dao.IStudentDao">
+
+    <!--实现登录验证-->
+    <select id="findLoginVerify" resultType="Student">
+        SELECT s.*,c.name clazzName
+        FROM student s
+        INNER JOIN clazz c ON c.id = s.clazzId
+        WHERE username = #{uName} AND password = #{pwd}
+    </select>
+
+    <!--实现查询全部-->
+    <select id="findAll" resultType="Student">
+        SELECT s.*,c.name clazzName
+        FROM `clazz` c, `student` s WHERE c.id = s.clazzId
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+            AND `username` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="clazzId != null and clazzId > 0">
+            AND `clazzId` = #{clazzId}
+        </if>
+        ORDER BY CONVERT(s.username USING gbk)
+        LIMIT #{start}, #{end}
+    </select>
+
+    <!--实现查询总记录数-->
+    <select id="findCount" resultType="int">
+        SELECT COUNT(1)
+        FROM `student` WHERE 1 = 1
+        <!--判断是否传入名字-->
+        <if test="name != null and name != ''">
+            AND `name` LIKE #{name}
+        </if>
+        <!--判断是否传入学科号-->
+        <if test="clazzId != null and clazzId > 0">
+            AND `clazzId` = #{clazzId}
+        </if>
+    </select>
+
+    <!--实现插入-->
+    <insert id="insertInfo" parameterType="Student">
+        INSERT INTO `student`(`clazzId`,`sn`,`username`,`password`,`sex`,`photo`,`remark`)
+        VALUES (#{clazzId},#{sn},#{username},#{password},#{sex},#{photo},#{remark})
+    </insert>
+
+    <!--实现更新-->
+    <update id="updateInfo" parameterType="Student">
+        UPDATE `student`
+        SET `username` = #{username}, `remark` = #{remark}, `clazzId` = #{clazzId}, `sex` = #{sex}, `photo` = #{photo}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--实现删除-->
+    <delete id="deleteInfo" parameterType="String">
+        DELETE
+        FROM `student`
+        WHERE `id` IN (${delValues})
+    </delete>
+
+</mapper>
