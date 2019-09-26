@@ -23,6 +23,7 @@ import java.util.Map;
  * @date: 2019/9/4
  * @time: 17:03
  * @comment: Clazz表的控制器
+ * 测试SourceTree管理
  */
 @Controller
 @RequestMapping("/clazz")
